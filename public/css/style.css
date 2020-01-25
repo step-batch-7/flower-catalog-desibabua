@@ -1,13 +1,19 @@
 body {
-  margin: 30px 50px;
+  margin: 50px 50px 0 50px;
   font-family: sans-serif;
   line-height: 24px;
+  font-weight: 200;
+}
+
+h1,h2 {
+  margin:15px 0;
+  font-weight: 500;
 }
 
 h1 {
   color: rgba(255, 165, 0, 0.8);
-  margin: 15px;
 }
+
 hr.light {
   border: 1px inset rgb(255, 255, 255);
 }
@@ -41,4 +47,19 @@ hr.light {
 
 .container > div {
   margin: auto 0;
+}
+
+.commentContainer {
+  margin: 100px;
+}
+
+.submitButton {
+  width:100px;
+  height:25px;
+  padding: 0;
+  font-size: 15px;
+  background-image: linear-gradient(white, white,#bbb);
+  border:1px solid #bbb;
+  border-radius: 3px;
+  margin-bottom: 20px;
 }
