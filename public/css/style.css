@@ -1,0 +1,33 @@
+body {
+  margin: 30px 50px;
+  font-family: sans-serif;
+}
+
+h1{
+  color: rgba(255,165,0,0.8);
+  margin: 15px;
+}
+hr.light {
+  border: 1px inset rgb(255, 255, 255);
+}
+
+.homeHeader{
+  text-align: end;
+  padding: 0 200px;
+}
+
+.flower {
+  border: 1px solid black;
+}
+
+.gif {
+  padding-left: 75px;
+}
+
+.container {
+  display: flex;
+}
+
+.container>div {
+  margin: auto 0;
+}
