@@ -1,17 +1,28 @@
 body {
   margin: 30px 50px;
   font-family: sans-serif;
+  line-height: 24px;
 }
 
-h1{
-  color: rgba(255,165,0,0.8);
+h1 {
+  color: rgba(255, 165, 0, 0.8);
   margin: 15px;
 }
 hr.light {
   border: 1px inset rgb(255, 255, 255);
 }
 
-.homeHeader{
+.textContainer > p,
+.textContainer > a {
+  margin: 10px 10px 20px;
+  text-align: justify;
+}
+
+.centerHeader {
+  text-align: center;
+}
+
+.homeHeader {
   text-align: end;
   padding: 0 200px;
 }
@@ -28,6 +39,6 @@ hr.light {
   display: flex;
 }
 
-.container>div {
+.container > div {
   margin: auto 0;
 }
