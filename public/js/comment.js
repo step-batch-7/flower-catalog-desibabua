@@ -5,6 +5,7 @@ const commentHistory = require(dbUrl);
 const changeToCorrectFormate = function(text) {
   let line = text.replace(/\+/g, ' ');
   line = line.replace(/%0D%0A/g, '\n');
+  line = decodeURIComponent(line);
   return line;
 };
 
