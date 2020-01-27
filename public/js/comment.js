@@ -13,7 +13,7 @@ const saveComment = function(comment) {
   if (!comment) return;
   comment.name = changeToCorrectFormate(comment.name);
   comment.comment = changeToCorrectFormate(comment.comment);
-  comment.date = new Date().toLocaleString();
+  comment.date = new Date().toJSON();
   commentHistory.unshift(comment);
   writeFileSync(dbUrl, JSON.stringify(commentHistory, null, 2));
 };
@@ -26,7 +26,7 @@ const loadComments = function() {
       <p>
         ${comment.comment}
       </p>
-      <p class="date">${comment.date}</p>
+      <p class="date">${new Date(comment.date).toLocaleString()}</p>
     </div>`;
     return html;
   });
