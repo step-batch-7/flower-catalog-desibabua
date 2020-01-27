@@ -46,7 +46,6 @@ const serveGuestPage = function(req) {
   res.setHeader('Content-Type', contentType);
   res.body = content.replace(/__comments__/g, loadComments());
   res.setHeader('Content-Length', res.body.length);
-  // console.log(res.body);
   return res;
 };
 
