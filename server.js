@@ -17,7 +17,7 @@ const getContentType = function(url) {
 
 const getReqFileName = function(url) {
   const lookUpForFile = {
-    '/': '/index.html',
+    '/': '/index.html'
   };
   const fileName = lookUpForFile[url] ? lookUpForFile[url] : url;
   const { urlDir } = getContentType(url);
@@ -36,9 +36,12 @@ const servePage = function(req) {
   return res;
 };
 
+const serveGuestPagePost = function(req) {
+  saveComment(req.body);
+  return serveGuestPage;
+};
+
 const serveGuestPage = function(req) {
-  saveComment(req.query);
-  loadComments();
   const res = new Response();
   res.statusCode = 200;
   const { contentType } = getContentType(req.url);
@@ -55,7 +58,10 @@ const isFilePresent = function(path) {
 };
 
 const findHandler = req => {
-  if (req.method === 'GET' && req.url == '/GuestBook.html') return serveGuestPage;
+  if (req.method === 'GET' && req.url == '/GuestBook.html')
+    return serveGuestPage;
+  if (req.method === 'POST' && req.url == '/GuestBook.html')
+    return serveGuestPagePost(req);
   if (req.method === 'GET' && isFilePresent(absUrl(req.url))) return servePage;
   return () => new Response();
 };
