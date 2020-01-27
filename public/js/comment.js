@@ -9,6 +9,7 @@ const changeToCorrectFormate = function(text) {
 };
 
 const saveComment = function(comment) {
+  if (!comment) return;
   comment.name = changeToCorrectFormate(comment.name);
   comment.comment = changeToCorrectFormate(comment.comment);
   comment.date = new Date().toLocaleString();
@@ -16,4 +17,19 @@ const saveComment = function(comment) {
   writeFileSync(dbUrl, JSON.stringify(commentHistory, null, 2));
 };
 
-module.exports = saveComment;
+const loadComments = function() {
+  const comments = commentHistory.map(comment => {
+    const html = `
+    <div class="comment">
+      <h3>${comment.name}</h3>
+      <p>
+        ${comment.comment}
+      </p>
+      <p class="date">${comment.date}</p>
+    </div>`;
+    return html;
+  });
+  return comments.join('\n');
+};
+
+module.exports = { saveComment, loadComments };
