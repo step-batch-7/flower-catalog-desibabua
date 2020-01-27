@@ -1,20 +1,49 @@
 const { Server } = require('net');
 const { readFileSync, existsSync, statSync } = require('fs');
 const lookUp = require('./lib/lookUp');
-const Request = require('./lib/request')
-const Response = require('./lib/response')
+const Request = require('./lib/request');
+const Response = require('./lib/response');
+const saveComment = require('./public/js/commentSaver');
+
+const SERVING_DIR = `${__dirname}/public`;
+
+const absUrl = url => getReqFileName(url);
 
 const getContentType = function(url) {
   const [, urlType] = url.match(/.*\.(.*)$/) || [, '/'];
   const contentType = lookUp[urlType].type;
-  return { contentType };
+  const urlDir = lookUp[urlType].dir;
+  return { contentType, urlDir };
+};
+
+const getReqFileName = function(url) {
+  const lookUpForFile = {
+    '/': '/index.html',
+    '/saveComment': '/GuestBook.html'
+  };
+  const fileName = lookUpForFile[url] ? lookUpForFile[url] : url;
+  const { urlDir } = getContentType(url);
+  const absUrl = `${SERVING_DIR}/${urlDir}${fileName}`;
+  return absUrl;
 };
 
 const servePage = function(req) {
   const res = new Response();
   res.statusCode = 200;
   const { contentType } = getContentType(req.url);
-  const content = readFileSync(req.url);
+  const content = readFileSync(absUrl(req.url));
+  res.setHeader('Content-Type', contentType);
+  res.setHeader('Content-Length', content.length);
+  res.body = content;
+  return res;
+};
+
+const serveGuestPage = function(req) {
+  saveComment(req.query);
+  const res = new Response();
+  res.statusCode = 200;
+  const { contentType } = getContentType(req.url);
+  const content = readFileSync(absUrl(req.url));
   res.setHeader('Content-Type', contentType);
   res.setHeader('Content-Length', content.length);
   res.body = content;
@@ -27,7 +56,8 @@ const isFilePresent = function(path) {
 };
 
 const findHandler = req => {
-  if (req.method === 'GET' && isFilePresent(req.url)) return servePage;
+  if (req.method === 'GET' && req.url == '/saveComment') return serveGuestPage;
+  if (req.method === 'GET' && isFilePresent(absUrl(req.url))) return servePage;
   return () => new Response();
 };
 
