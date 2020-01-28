@@ -30,9 +30,15 @@ const servePage = function(req, res) {
   res.end();
 };
 
-const serveGuestPagePost = function(req) {
-  saveComment(req);
-  return serveGuestPage;
+const serveGuestPagePost = function(req, res) {
+  let comment = '';
+  req.on('data', chunk => (comment += chunk));
+  req.on('end', () => {
+    saveComment(comment);
+  });
+  res.statusCode = 303;
+  res.setHeader('location', '/GuestBook.html');
+  res.end();
 };
 
 const serveGuestPage = function(req, res) {
@@ -58,7 +64,7 @@ const findHandler = req => {
   if (req.method === 'GET' && req.url == '/GuestBook.html')
     return serveGuestPage;
   if (req.method === 'POST' && req.url == '/GuestBook.html')
-    return serveGuestPagePost(req);
+    return serveGuestPagePost;
   if (req.method === 'GET' && isFilePresent(absUrl(req.url))) return servePage;
   return serverDefaultPage;
 };
