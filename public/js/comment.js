@@ -2,6 +2,15 @@ const { writeFileSync } = require('fs');
 const dbUrl = `${__dirname}/../../dataBase/commentHistory.json`;
 const commentHistory = require(dbUrl);
 
+const pickupParams = (query, keyValue) => {
+  const [key, value] = keyValue.split('=');
+  query[key] = value;
+  return query;
+};
+
+const readParams = keyValueTextPairs =>
+  keyValueTextPairs.split('&').reduce(pickupParams, {});
+
 const changeToCorrectFormate = function(text) {
   let line = text.replace(/\+/g, ' ');
   line = line.replace(/\%0D\%0A/g, '<br />');
@@ -9,13 +18,18 @@ const changeToCorrectFormate = function(text) {
   return line;
 };
 
-const saveComment = function(comment) {
-  if (!comment) return;
-  comment.name = changeToCorrectFormate(comment.name);
-  comment.comment = changeToCorrectFormate(comment.comment);
-  comment.date = new Date().toJSON();
-  commentHistory.unshift(comment);
-  writeFileSync(dbUrl, JSON.stringify(commentHistory, null, 2));
+const saveComment = function(req) {
+  let comment = '';
+  req.on('data', chunk => (comment += chunk));
+  req.on('end', () => {
+    if (!comment) return;
+    comment = readParams(comment)
+    comment.name = changeToCorrectFormate(comment.name);
+    comment.comment = changeToCorrectFormate(comment.comment);
+    comment.date = new Date().toJSON();
+    commentHistory.unshift(comment);
+    writeFileSync(dbUrl, JSON.stringify(commentHistory, null, 2));
+  });
 };
 
 const loadComments = function() {

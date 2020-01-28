@@ -1,6 +1,5 @@
 const { readFileSync, existsSync, statSync } = require('fs');
 const lookUp = require('./lib/lookUp');
-const Response = require('./lib/response');
 const { saveComment, loadComments } = require('./public/js/comment');
 
 const SERVING_DIR = `${__dirname}/public`;
@@ -23,31 +22,31 @@ const getReqFileName = function(url) {
   return absUrl;
 };
 
-const servePage = function(req) {
-  const res = new Response();
-  res.statusCode = 200;
+const servePage = function(req, res) {
   const { contentType } = getContentType(req.url);
   const content = readFileSync(absUrl(req.url));
   res.setHeader('Content-Type', contentType);
-  res.setHeader('Content-Length', content.length);
-  res.body = content;
-  return res;
+  res.write(content);
+  res.end();
 };
 
 const serveGuestPagePost = function(req) {
-  saveComment(req.body);
+  saveComment(req);
   return serveGuestPage;
 };
 
-const serveGuestPage = function(req) {
-  const res = new Response();
-  res.statusCode = 200;
+const serveGuestPage = function(req, res) {
   const { contentType } = getContentType(req.url);
-  const content = readFileSync(absUrl(req.url), 'utf8');
+  let content = readFileSync(absUrl(req.url), 'utf8');
+  content = content.replace(/__comments__/g, loadComments());
   res.setHeader('Content-Type', contentType);
-  res.body = content.replace(/__comments__/g, loadComments());
-  res.setHeader('Content-Length', res.body.length);
-  return res;
+  res.write(content);
+  res.end();
+};
+
+const serverDefaultPage = function(req, res) {
+  res.write('<h1>file Not found</h1>');
+  res.end();
 };
 
 const isFilePresent = function(path) {
@@ -61,7 +60,7 @@ const findHandler = req => {
   if (req.method === 'POST' && req.url == '/GuestBook.html')
     return serveGuestPagePost(req);
   if (req.method === 'GET' && isFilePresent(absUrl(req.url))) return servePage;
-  return () => new Response();
+  return serverDefaultPage;
 };
 
 module.exports = findHandler;
