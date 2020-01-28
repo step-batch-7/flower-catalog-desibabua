@@ -68,14 +68,14 @@ hr.light {
 .comment {
   margin: 20px 50px;
   width: 800px;
-  height: auto;
-  padding:0px 20px;
+  padding: 0px 20px;
   border: 1px solid black;
   border-radius: 10px;
   background-color: rgb(252, 249, 245);
+  word-wrap: break-word;
 }
 
-.comment >h3 {
+.comment > h3 {
   margin: 5px 0;
   font-weight: 400;
 }
