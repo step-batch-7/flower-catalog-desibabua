@@ -1,20 +1,18 @@
 const { readFileSync, existsSync, statSync } = require('fs');
-const lookUp = require('./lib/lookUp');
+const mimeType = require('./lib/lookUp');
 const { saveComment, loadComments } = require('./public/js/comment');
 
 const SERVING_DIR = `${__dirname}/public`;
 const absUrl = url => getReqFileName(url);
 
 const getContentType = function(url) {
-  const [, urlType] = url.match(/.*\.(.*)$/) || [, '/'];
-  const contentType = lookUp[urlType].type;
-  const urlDir = lookUp[urlType].dir;
-  return { contentType, urlDir };
+  const extension = url.split('.').pop();
+  const contentType = mimeType[extension];
+  return { contentType };
 };
 
 const getReqFileName = function(url) {
-  const { urlDir } = getContentType(url);
-  const absUrl = `${SERVING_DIR}/${urlDir}${url}`;
+  const absUrl = `${SERVING_DIR}/${url}`;
   return absUrl;
 };
 
