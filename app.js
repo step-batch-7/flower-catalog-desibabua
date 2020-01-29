@@ -23,6 +23,7 @@ const getReqFileName = function(url) {
 };
 
 const servePage = function(req, res) {
+  if (!isFilePresent(absUrl(req.url))) return serverDefaultPage(req, res);
   const { contentType } = getContentType(req.url);
   const content = readFileSync(absUrl(req.url));
   res.setHeader('Content-Type', contentType);
@@ -60,13 +61,30 @@ const isFilePresent = function(path) {
   return stat;
 };
 
+const methodNotFound = function(req, res) {
+  res.write('<h1>method is not legal</h1>');
+  res.end();
+};
+
+const getHandler = {
+  '/GuestBook.html': serveGuestPage,
+  default: servePage
+};
+
+const postHandler = {
+  '/GuestBook.html': serveGuestPagePost
+};
+
+const methods = {
+  GET: getHandler,
+  Post: postHandler,
+  default: { default: methodNotFound }
+};
+
 const findHandler = req => {
-  if (req.method === 'GET' && req.url == '/GuestBook.html')
-    return serveGuestPage;
-  if (req.method === 'POST' && req.url == '/GuestBook.html')
-    return serveGuestPagePost;
-  if (req.method === 'GET' && isFilePresent(absUrl(req.url))) return servePage;
-  return serverDefaultPage;
+  const method = methods[req.method] || methods.default;
+  const handler = method[req.url] || method.default;
+  return handler;
 };
 
 module.exports = findHandler;
