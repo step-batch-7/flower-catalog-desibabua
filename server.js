@@ -1,5 +1,5 @@
 const { Server } = require('http');
-const app = require('./handler');
+const app = require('./lib/handler');
 
 const main = function(port = 4000) {
   const server = new Server(app.serve.bind(app));
