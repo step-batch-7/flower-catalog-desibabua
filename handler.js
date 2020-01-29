@@ -28,7 +28,6 @@ const servePage = function(req, res) {
   const content = readFileSync(absUrl(req.url));
   res.setHeader('Content-Type', contentType);
   res.write(content);
-  res.end();
 };
 
 const serveGuestPagePost = function(req, res) {
@@ -39,7 +38,6 @@ const serveGuestPagePost = function(req, res) {
   });
   res.statusCode = 303;
   res.setHeader('location', '/GuestBook.html');
-  res.end();
 };
 
 const serveGuestPage = function(req, res) {
@@ -48,12 +46,10 @@ const serveGuestPage = function(req, res) {
   content = content.replace(/__comments__/g, loadComments());
   res.setHeader('Content-Type', contentType);
   res.write(content);
-  res.end();
 };
 
 const serverDefaultPage = function(req, res) {
   res.write('<h1>file Not found</h1>');
-  res.end();
 };
 
 const isFilePresent = function(path) {
@@ -63,7 +59,6 @@ const isFilePresent = function(path) {
 
 const methodNotFound = function(req, res) {
   res.write('<h1>method is not legal</h1>');
-  res.end();
 };
 
 const getHandler = {
@@ -87,4 +82,11 @@ const findHandler = req => {
   return handler;
 };
 
-module.exports = findHandler;
+const handleConnection = function(req, res) {
+  console.log('Request: ', req.url, req.method);
+  const handler = findHandler(req);
+  handler(req, res);
+  res.end();
+};
+
+module.exports = handleConnection;
