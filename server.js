@@ -1,9 +1,9 @@
 const { Server } = require('http');
 const handleConnection = require('./handler');
 
-const main = function() {
+const main = function(port = 4000) {
   const server = new Server(handleConnection);
-  server.listen(4000);
+  server.listen(port);
 };
 
-main();
+main(process.argv[2]);

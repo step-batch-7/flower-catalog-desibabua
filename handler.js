@@ -25,7 +25,9 @@ const serveHomePage = function(req, res) {
 };
 
 const servePage = function(req, res) {
-  if (!isFilePresent(absUrl(req.url))) return serverDefaultPage(req, res);
+  if (!isFilePresent(absUrl(req.url))) {
+    return serverDefaultPage(req, res);
+  }
   const { contentType } = getContentType(req.url);
   const content = readFileSync(absUrl(req.url));
   res.setHeader('Content-Type', contentType);
@@ -34,7 +36,9 @@ const servePage = function(req, res) {
 
 const serveGuestPagePost = function(req, res) {
   let comment = '';
-  req.on('data', chunk => (comment += chunk));
+  req.on('data', chunk => {
+    comment += chunk;
+  });
   req.on('end', () => {
     saveComment(comment);
   });
@@ -86,7 +90,6 @@ const findHandler = req => {
 };
 
 const handleConnection = function(req, res) {
-  console.log('Request: ', req.url, req.method);
   const handler = findHandler(req);
   handler(req, res);
   res.end();
