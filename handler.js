@@ -72,7 +72,7 @@ const postHandler = {
 
 const methods = {
   GET: getHandler,
-  Post: postHandler,
+  POST: postHandler,
   default: { default: methodNotFound }
 };
 
