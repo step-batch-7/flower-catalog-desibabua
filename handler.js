@@ -13,13 +13,17 @@ const getContentType = function(url) {
 };
 
 const getReqFileName = function(url) {
-  const lookUpForFile = {
-    '/': '/index.html'
-  };
-  const fileName = lookUpForFile[url] ? lookUpForFile[url] : url;
   const { urlDir } = getContentType(url);
-  const absUrl = `${SERVING_DIR}/${urlDir}${fileName}`;
+  const absUrl = `${SERVING_DIR}/${urlDir}${url}`;
   return absUrl;
+};
+
+const serveHomePage = function(req, res) {
+  const url = '/index.html';
+  const { contentType } = getContentType(url);
+  const content = readFileSync(absUrl(url));
+  res.setHeader('Content-Type', contentType);
+  res.write(content);
 };
 
 const servePage = function(req, res) {
@@ -62,6 +66,7 @@ const methodNotFound = function(req, res) {
 };
 
 const getHandler = {
+  '/': serveHomePage,
   '/GuestBook.html': serveGuestPage,
   default: servePage
 };
