@@ -1,5 +1,6 @@
 const { readFileSync, existsSync, statSync } = require('fs');
 const mimeType = require('./lib/lookUp');
+const App = require('./app');
 const { saveComment, loadComments } = require('./public/js/comment');
 
 const SERVING_DIR = `${__dirname}/public`;
@@ -24,9 +25,9 @@ const serveHomePage = function(req, res) {
   res.write(content);
 };
 
-const servePage = function(req, res) {
+const servePage = function(req, res, next) {
   if (!isFilePresent(absUrl(req.url))) {
-    return serverDefaultPage(req, res);
+    return next();
   }
   const { contentType } = getContentType(req.url);
   const content = readFileSync(absUrl(req.url));
@@ -67,32 +68,16 @@ const methodNotFound = function(req, res) {
   res.write('<h1>method is not legal</h1>');
 };
 
-const getHandler = {
-  '/': serveHomePage,
-  '/GuestBook.html': serveGuestPage,
-  default: servePage
-};
+const app = new App();
 
-const postHandler = {
-  '/GuestBook.html': serveGuestPagePost
-};
+app.get('/GuestBook.html', serveGuestPage);
+app.post('/GuestBook.html', serveGuestPagePost);
+app.get('', servePage);
+app.get('/', serveHomePage);
+app.get('', serverDefaultPage);
 
-const methods = {
-  GET: getHandler,
-  POST: postHandler,
-  default: { default: methodNotFound }
-};
+app.post('', serverDefaultPage);
 
-const findHandler = req => {
-  const method = methods[req.method] || methods.default;
-  const handler = method[req.url] || method.default;
-  return handler;
-};
+app.use(methodNotFound);
 
-const handleConnection = function(req, res) {
-  const handler = findHandler(req);
-  handler(req, res);
-  res.end();
-};
-
-module.exports = handleConnection;
+module.exports = app;
