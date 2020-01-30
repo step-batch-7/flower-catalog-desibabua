@@ -1,30 +1,15 @@
 const { writeFileSync } = require('fs');
+const { parse } = require('querystring');
 const dbUrl = `${__dirname}/../../dataBase/commentHistory.json`;
 const commentHistory = require(dbUrl);
 
-const pickupParams = (query, keyValue) => {
-  const [key, value] = keyValue.split('=');
-  query[key] = value;
-  return query;
-};
-
-const readParams = keyValueTextPairs =>
-  keyValueTextPairs.split('&').reduce(pickupParams, {});
-
-const changeToCorrectFormate = function(text) {
-  let line = text.replace(/\+/g, ' ');
-  line = line.replace(/\%0D\%0A/g, '<br />');
-  line = decodeURIComponent(line);
-  return line;
-};
-
 const saveComment = function(comment) {
-  if (!comment) return;
-  comment = readParams(comment);
-  comment.name = changeToCorrectFormate(comment.name);
-  comment.comment = changeToCorrectFormate(comment.comment);
-  comment.date = new Date().toJSON();
-  commentHistory.unshift(comment);
+  if (!comment) {
+    return;
+  }
+  const currentComment = parse(comment);
+  currentComment.date = new Date().toJSON();
+  commentHistory.unshift(currentComment);
   writeFileSync(dbUrl, JSON.stringify(commentHistory, null, 2));
 };
 
