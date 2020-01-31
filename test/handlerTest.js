@@ -12,7 +12,7 @@ describe('** GET', function() {
   });
 
   describe('* for index.html ', function() {
-    it('should give index page', function(done) {
+    it('should give index page when url is /', function(done) {
       request(app.serve.bind(app))
         .get('/')
         .set('Accept', '*/*')
