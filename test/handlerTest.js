@@ -73,3 +73,12 @@ describe('** GET', function() {
     });
   });
 });
+
+describe('** PUT ', function() {
+  it('should give error for method not found', function(done) {
+    request(app.serve.bind(app))
+      .put('/badFile')
+      .set('Accept', '*/*')
+      .expect(404, done);
+  });
+});
