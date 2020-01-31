@@ -18,7 +18,8 @@ describe('** GET', function() {
         .set('Accept', '*/*')
         .expect(200)
         .expect('content-type', /html/)
-        .expect(/<h1 class="homeHeader">Flower Catalog<\/h1>/, done);
+        .expect(/<h1 class="homeHeader">Flower Catalog<\/h1>/, done)
+        .expect('Content-Length', '837');
     });
 
     it('should give index page', function(done) {
@@ -27,7 +28,8 @@ describe('** GET', function() {
         .set('Accept', '*/*')
         .expect(200)
         .expect('content-type', /html/)
-        .expect(/<h1 class="homeHeader">Flower Catalog<\/h1>/, done);
+        .expect(/<h1 class="homeHeader">Flower Catalog<\/h1>/, done)
+        .expect('Content-Length', '837');
     });
   });
 
@@ -41,7 +43,8 @@ describe('** GET', function() {
         .expect(
           /<h1 class="centerHeader"><a href="index.html">&lt;&lt;<\/a> Abeliophyllum<\/h1>/,
           done
-        );
+        )
+        .expect('Content-Length', '1392');
     });
   });
 
@@ -55,7 +58,8 @@ describe('** GET', function() {
         .expect(
           /<h1 class="centerHeader"><a href="index.html">&lt;&lt;<\/a> Agerantum<\/h1>/,
           done
-        );
+        )
+        .expect('Content-Length', '1180');
     });
   });
 
