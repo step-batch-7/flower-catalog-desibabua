@@ -82,3 +82,15 @@ describe('** PUT ', function() {
       .expect(404, done);
   });
 });
+
+describe('** POST ', function() {
+  it('should redirect when post is called', function(done) {
+    request(app.serve.bind(app))
+      .post('/GuestBook.html')
+      .set('Accept', '*/*')
+      .expect(303, done)
+      .expect(res => {
+        res.header['location'] === '/GuestBook.html';
+      });
+  });
+});
