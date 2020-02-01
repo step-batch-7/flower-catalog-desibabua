@@ -90,9 +90,9 @@ describe('** PUT ', function() {
 });
 
 describe('** POST ', function() {
-  after(() => {
+  const empty = () => {
     fs.truncateSync(config.COMMENT_STORE);
-  });
+  };
 
   describe('* when one comment is written', function() {
     it('should redirect when /GuestBook.html is called by post method', function(done) {
@@ -101,9 +101,7 @@ describe('** POST ', function() {
         .set('Accept', '*/*')
         .send('name=Tom&comment=I+want+jerry')
         .expect(303, done)
-        .expect(res => {
-          res.header['location'] === '/GuestBook.html';
-        });
+        .expect('location', 'GuestBook.html');
     });
     it('should give GuestBook page', function(done) {
       request(app.serve.bind(app))
@@ -114,7 +112,10 @@ describe('** POST ', function() {
         .expect('content-length', '1040')
         .expect(
           /<h1 class="centerHeader"><a href="index.html">&lt;&lt;<\/a> GuestBook<\/h1>/,
-          done
+          () => {
+            empty();
+            done();
+          }
         );
     });
   });
@@ -126,9 +127,7 @@ describe('** POST ', function() {
         .set('Accept', '*/*')
         .send('name=Tom&comment=I+want+jerry')
         .expect(303, done)
-        .expect(res => {
-          res.header['location'] === '/GuestBook.html';
-        });
+        .expect('location', 'GuestBook.html');
     });
 
     it('should redirect when /GuestBook.html is called by post method and write second comment ', function(done) {
@@ -137,9 +136,7 @@ describe('** POST ', function() {
         .set('Accept', '*/*')
         .send('name=Tom&comment=But+I+will+not+eat+him')
         .expect(303, done)
-        .expect(res => {
-          res.header['location'] === '/GuestBook.html';
-        });
+        .expect('location', 'GuestBook.html');
     });
 
     it('should give GuestBook page', function(done) {
@@ -148,10 +145,13 @@ describe('** POST ', function() {
         .set('Accept', '*/*')
         .expect(200)
         .expect('content-type', /html/)
-        .expect('content-length', '1342')
+        .expect('content-length', '1196')
         .expect(
           /<h1 class="centerHeader"><a href="index.html">&lt;&lt;<\/a> GuestBook<\/h1>/,
-          done
+          () => {
+            empty();
+            done();
+          }
         );
     });
   });
