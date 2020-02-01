@@ -1,5 +1,7 @@
+const fs = require('fs');
 const request = require('supertest');
 const app = require('../lib/handler');
+const config = require('../config');
 
 describe('** GET', function() {
   describe('* for /badFile ', function() {
@@ -88,13 +90,30 @@ describe('** PUT ', function() {
 });
 
 describe('** POST ', function() {
-  it('should redirect when post is called', function(done) {
+  after(() => {
+    fs.truncateSync(config.COMMENT_STORE);
+  });
+
+  it('should redirect when /GuestBook.html is called by post method', function(done) {
     request(app.serve.bind(app))
       .post('/GuestBook.html')
       .set('Accept', '*/*')
+      .send('name=Tom&comment=I+want+jerry')
       .expect(303, done)
       .expect(res => {
         res.header['location'] === '/GuestBook.html';
       });
+  });
+  it('should give GuestBook page', function(done) {
+    request(app.serve.bind(app))
+      .get('/GuestBook.html')
+      .set('Accept', '*/*')
+      .expect(200)
+      .expect('content-type', /html/)
+      .expect('content-length', '1040')
+      .expect(
+        /<h1 class="centerHeader"><a href="index.html">&lt;&lt;<\/a> GuestBook<\/h1>/,
+        done
+      );
   });
 });
