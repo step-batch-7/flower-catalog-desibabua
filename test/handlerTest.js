@@ -94,26 +94,65 @@ describe('** POST ', function() {
     fs.truncateSync(config.COMMENT_STORE);
   });
 
-  it('should redirect when /GuestBook.html is called by post method', function(done) {
-    request(app.serve.bind(app))
-      .post('/GuestBook.html')
-      .set('Accept', '*/*')
-      .send('name=Tom&comment=I+want+jerry')
-      .expect(303, done)
-      .expect(res => {
-        res.header['location'] === '/GuestBook.html';
-      });
+  describe('* when one comment is written', function() {
+    it('should redirect when /GuestBook.html is called by post method', function(done) {
+      request(app.serve.bind(app))
+        .post('/GuestBook.html')
+        .set('Accept', '*/*')
+        .send('name=Tom&comment=I+want+jerry')
+        .expect(303, done)
+        .expect(res => {
+          res.header['location'] === '/GuestBook.html';
+        });
+    });
+    it('should give GuestBook page', function(done) {
+      request(app.serve.bind(app))
+        .get('/GuestBook.html')
+        .set('Accept', '*/*')
+        .expect(200)
+        .expect('content-type', /html/)
+        .expect('content-length', '1040')
+        .expect(
+          /<h1 class="centerHeader"><a href="index.html">&lt;&lt;<\/a> GuestBook<\/h1>/,
+          done
+        );
+    });
   });
-  it('should give GuestBook page', function(done) {
-    request(app.serve.bind(app))
-      .get('/GuestBook.html')
-      .set('Accept', '*/*')
-      .expect(200)
-      .expect('content-type', /html/)
-      .expect('content-length', '1040')
-      .expect(
-        /<h1 class="centerHeader"><a href="index.html">&lt;&lt;<\/a> GuestBook<\/h1>/,
-        done
-      );
+
+  describe('* when two comments are written', function() {
+    it('should redirect when /GuestBook.html is called by post method and write first comment ', function(done) {
+      request(app.serve.bind(app))
+        .post('/GuestBook.html')
+        .set('Accept', '*/*')
+        .send('name=Tom&comment=I+want+jerry')
+        .expect(303, done)
+        .expect(res => {
+          res.header['location'] === '/GuestBook.html';
+        });
+    });
+
+    it('should redirect when /GuestBook.html is called by post method and write second comment ', function(done) {
+      request(app.serve.bind(app))
+        .post('/GuestBook.html')
+        .set('Accept', '*/*')
+        .send('name=Tom&comment=But+I+will+not+eat+him')
+        .expect(303, done)
+        .expect(res => {
+          res.header['location'] === '/GuestBook.html';
+        });
+    });
+
+    it('should give GuestBook page', function(done) {
+      request(app.serve.bind(app))
+        .get('/GuestBook.html')
+        .set('Accept', '*/*')
+        .expect(200)
+        .expect('content-type', /html/)
+        .expect('content-length', '1342')
+        .expect(
+          /<h1 class="centerHeader"><a href="index.html">&lt;&lt;<\/a> GuestBook<\/h1>/,
+          done
+        );
+    });
   });
 });
