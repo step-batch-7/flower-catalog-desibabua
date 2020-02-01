@@ -3,7 +3,7 @@ const request = require('supertest');
 const app = require('../lib/handler');
 const config = require('../config');
 
-describe('** GET', function() {
+describe('** GET for html files', function() {
   describe('* for /badFile ', function() {
     it('should give error ', function(done) {
       request(app.serve.bind(app))
@@ -77,6 +77,39 @@ describe('** GET', function() {
           done
         );
     });
+  });
+});
+
+describe('** GET for css ', function() {
+  it('should give css file', function(done) {
+    request(app.serve.bind(app))
+      .get('/css/style.css')
+      .set('Accept', '*/*')
+      .expect(200, done)
+      .expect('content-type', /css/)
+      .expect(/text-align/)
+      .expect('Content-Length', '1153');
+  });
+});
+
+describe('** GET for image ', function() {
+  it('should give image file', function(done) {
+    request(app.serve.bind(app))
+      .get('/images/freshorigins.jpg')
+      .set('Accept', '*/*')
+      .expect(200, done)
+      .expect('content-type', /jpeg/);
+  });
+});
+
+describe('** GET for pdf ', function() {
+  it('should give pdf file', function(done) {
+    request(app.serve.bind(app))
+      .get('/pdfs/Abeliophyllum.pdf')
+      .set('Accept', '*/*')
+      .expect(200, done)
+      .expect('content-type', /pdf/)
+      .expect('Content-Length', '35864');
   });
 });
 
