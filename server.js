@@ -1,9 +1,11 @@
 const { Server } = require('http');
 const app = require('./lib/handler');
 
-const main = function(port = 4000) {
+const port = process.env.PORT || 4000;
+
+const main = function() {
   const server = new Server(app.serve.bind(app));
   server.listen(port);
 };
 
-main(process.argv[2]);
+main();
