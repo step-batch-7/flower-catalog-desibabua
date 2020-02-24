@@ -24,5 +24,8 @@
     "mocha": "^7.0.1",
     "supertest": "^4.0.2",
     "eslint": "^6.8.0"
+  },
+  "dependencies": {
+    "redis": "^3.0.2"
   }
 }
